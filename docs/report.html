@@ -1,14 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Phishing Website Detection Project</title>
+  <meta charset="UTF-8" />
+  <title>Phishing Email Detection Project</title>
   <style>
     body {
       font-family: Arial, sans-serif;
       margin: 40px;
       line-height: 1.6;
-      background-color: #fdfdfd;
+      background-color: #f9f9f9;
       color: #222;
     }
     h1, h2, h3 {
@@ -44,7 +44,7 @@
       color: #fff;
     }
     .flow-box {
-      background: #eef;
+      background: #eef4fb;
       border-left: 5px solid #003366;
       padding: 10px;
       margin: 15px 0;
@@ -66,87 +66,90 @@
 </head>
 <body>
 
-  <h1>Machine Learning-Based Phishing Website Detection</h1>
+  <h1>Machine Learning-Based Phishing Email Detection</h1>
 
   <h2>High-Level Design (HLD)</h2>
   <h3>System Overview</h3>
   <ul>
-    <li><b>Data Layer</b>: Kaggle dataset, URL lexical and metadata features</li>
-    <li><b>Processing Layer</b>: Preprocessing, Feature Engineering, ML Model Training, Evaluation</li>
-    <li><b>Application Layer</b>: Streamlit/Web App for URL checking</li>
+    <li><b>Data Layer</b>: Cleaned text dataset (17,000+ emails) with lexical and metadata features</li>
+    <li><b>Processing Layer</b>: Text cleaning, tokenization, feature encoding, ML and DL training, evaluation</li>
+    <li><b>Application Layer</b>: API or Streamlit app for real-time email checking</li>
   </ul>
 
   <h2>Detailed Design (DLD)</h2>
   <h3>Input Data</h3>
-  <p>10,000 rows × 50 features (<code>Phishing_Legitimate_full.csv</code>), label column: <b>CLASS_LABEL</b> (1 = Phishing, 0 = Legitimate).</p>
+  <p>17,000+ email records with raw text and engineered NLP features, labeled as <b>1 = Phishing</b>, <b>0 = Safe</b>.</p>
 
   <h3>Preprocessing</h3>
   <ul>
-    <li>Drop ID columns</li>
-    <li>Median imputation for missing values</li>
-    <li>Feature scaling with StandardScaler (for LR)</li>
+    <li>Remove null and duplicate emails</li>
+    <li>Encode labels numerically</li>
+    <li>Clean text by removing links, punctuation, and converting to lowercase</li>
+    <li>Tokenize and pad text sequences for deep learning models</li>
   </ul>
 
   <h3>Feature Set</h3>
   <ul>
-    <li><b>Lexical</b>: NumDots, SubdomainLevel, UrlLength, NumDash, IpAddress</li>
-    <li><b>Metadata</b>: NoHttps, HostnameLength, PctExtHyperlinks, AbnormalFormAction</li>
-    <li><b>Behavioral</b>: PopUpWindow, RightClickDisabled, SubmitInfoToEmail</li>
+    <li><b>Lexical</b>: Word count, special character frequency, email length</li>
+    <li><b>Metadata</b>: Presence of suspicious terms, unusual formatting</li>
+    <li><b>Semantic</b>: NLP embeddings for contextual analysis</li>
   </ul>
 
   <h3>Model Pipeline</h3>
   <ol>
-    <li>Load dataset & split (80/20)</li>
-    <li>Train models: Logistic Regression, Random Forest, Gradient Boosting</li>
-    <li>Evaluate with Accuracy, Precision, Recall, F1, ROC-AUC</li>
-    <li>Save best model (Random Forest)</li>
+    <li>Load and clean dataset; train-test split (80/20)</li>
+    <li>Train models: Naive Bayes, Logistic Regression, Random Forest, XGBoost</li>
+    <li>Build and train LSTM deep learning model</li>
+    <li>Evaluate using accuracy, precision, recall, F1, ROC-AUC</li>
+    <li>Save best performing models</li>
   </ol>
 
   <h2>Flowcharts / Diagrams (Text Format)</h2>
+
   <h3>Workflow Diagram</h3>
   <div class="flow-box">
-User URL → Feature Extraction → Preprocessing → ML Model → Prediction → Result
+User Email → Preprocessing → Feature Extraction → ML/DL Model → Prediction → Result
   </div>
 
   <h3>Data Flow Diagram (DFD)</h3>
   <div class="flow-box">
-Level 0: User ↔ Phishing Detection System ↔ Dataset
+Level 0: User ↔ Phishing Detection System ↔ Email Dataset
 
-Level 1:
-Data Input → Feature Extractor → Preprocessor → Classifier → Output
+Level 1: 
+Email Input → Text Cleaner → Feature Generator → Classifier → Output
   </div>
 
   <h3>Process Flow (Training Phase)</h3>
   <div class="flow-box">
 Start
-  ↓
+↓
 Load Dataset
-  ↓
-Preprocess Data
-  ↓
-Train Models (LR, RF, GB)
-  ↓
+↓
+Clean & Preprocess Data
+↓
+Train Models (NB, LR, RF, LSTM)
+↓
 Evaluate Models
-  ↓
+↓
 Save Best Model
-  ↓
+↓
 End
   </div>
 
   <h3>Process Flow (Prediction Phase)</h3>
   <div class="flow-box">
 Start
-  ↓
-User Enters URL
-  ↓
-Extract Features
-  ↓
-Load Saved Model
-  ↓
-Predict Phishing/Legitimate
-  ↓
+↓
+User Inputs Email Text
+↓
+Preprocess
+↓
+Load Model
+↓
+Predict Phishing/Safe
+↓
 Show Result
-  ↓
+↓
 End
   </div>
 
@@ -161,53 +164,57 @@ End
       <th>ROC-AUC</th>
     </tr>
     <tr>
-      <td>Logistic Regression</td>
-      <td>96.7%</td>
-      <td>0.96</td>
-      <td>0.97</td>
-      <td>0.967</td>
-      <td>0.987</td>
-    </tr>
-    <tr>
-      <td>Random Forest</td>
-      <td><b>99.4%</b></td>
-      <td>0.99</td>
-      <td>0.99</td>
-      <td>0.994</td>
-      <td>0.999</td>
-    </tr>
-    <tr>
-      <td>Hist. Gradient Boost</td>
-      <td>98.9%</td>
+      <td>Naive Bayes</td>
+      <td>97.5%</td>
+      <td>0.98</td>
+      <td>0.98</td>
       <td>0.98</td>
       <td>0.99</td>
-      <td>0.989</td>
-      <td>0.998</td>
+    </tr>
+    <tr>
+      <td>Logistic Regression</td>
+      <td>98.2%</td>
+      <td>0.98</td>
+      <td>0.98</td>
+      <td>0.99</td>
+      <td>0.99</td>
+    </tr>
+    <tr>
+      <td>LSTM (Deep Learning)</td>
+      <td>96.5%</td>
+      <td>0.97</td>
+      <td>0.97</td>
+      <td>0.97</td>
+      <td>0.99</td>
     </tr>
   </table>
 
-  <h2>Visual Results</h2>
+   <h2>Some Visual Results per Model</h2>
 
-<h3>Dataset Description</h3>
-<div class="img-box">
-  <img src="../images/dataset_desc.png" alt="Dataset Description" width="400">
-</div>
+  <h3>Naive Bayes</h3>
+  <div class="img-box">
+    <img src="../images/naive_stats.png" alt="Naive Bayes ROC Curve" width="400" />
+    <img src="../images/naive_matrix.png" alt="Naive Bayes Confusion Matrix" width="400" />
+  </div>
 
-<h3>ROC Curve</h3>
-<div class="img-box">
-  <img src="../images/roc_curve.png" alt="ROC Curve" width="400">
-</div>
+  <h3>Logistic Regression</h3>
+  <div class="img-box">
+    <img src="../images/logistic_stats.png" alt="Logistic Regression ROC Curve" width="400" />
+    <img src="../images/logistic_matrix.png" alt="Logistic Regression Confusion Matrix" width="400" />
+  </div>
 
-<h3>Confusion Matrix</h3>
-<div class="img-box">
-  <img src="../images/confusion_matrix.png" alt="Confusion Matrix" width="400">
-</div>
+  <h3>Comparison of Models</h3>
+  <div class="img-box">
+    <img src="../images/all_models.png" alt="Logistic Regression ROC Curve" width="800" />
+    
+  </div>
 
-<h3>Feature Importances</h3>
-<div class="img-box">
-  <img src="../images/top_features.png" alt="Feature Importances" width="400">
-</div>
-
+  <h3>LSTM (Deep Learning)</h3>
+  <div class="img-box">
+    <img src="../images/bi_directional.png" alt="bi_directional_Confusion_Matrix" width="400" />
+    <img src="../images/lstm.png" alt="LSTM Confusion Matrix" width="400" />
+    <img src="../images/gru.png" alt="GRU_Confusion_Matrix" width="400" />
+  </div>
 
   <h2>References (IEEE Format)</h2>
   <ol>
@@ -215,7 +222,7 @@ End
     <li>Y. Zhang, J. Hong, and L. F. Cranor, "CANTINA: A content-based approach to detecting phishing websites," in <i>Proc. 16th Int. Conf. World Wide Web (WWW)</i>, 2007, pp. 639–648.</li>
     <li>D. Miyamoto, et al., "An evaluation of machine learning-based methods for detection of phishing sites," in <i>Proc. APWG eCrime Researchers Summit</i>, 2008.</li>
     <li>S. Marchal, G. Armano, et al., "PhishStorm: Detecting phishing with streaming analytics," <i>IEEE Trans. Comput.</i>, vol. 65, no. 5, pp. 1352–1365, 2016.</li>
-    <li>Kaggle, "Phishing Website Dataset," [Online]. Available: <a href="https://www.kaggle.com/datasets/shashwatwork/phishing-dataset-for-machine-learning">https://www.kaggle.com/dataset</a></li>
+    <li>Kaggle, "Phishing Email Dataset," [Online]. Available: <a href="https://www.kaggle.com/">https://www.kaggle.com/</a></li>
   </ol>
 
 </body>
